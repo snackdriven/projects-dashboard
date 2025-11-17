@@ -67,26 +67,33 @@ app.get('/api/projects/:name/status', async (req, res) => {
     const { name } = req.params;
     const projectPath = join(PROJECTS_DIR, name);
     
-    // Default Vite port is 5173, but projects might use different ports
-    // For now, we'll check if the dev server process is running
+    // Check if the dev server process is running by looking for node processes
+    // that have the project name in their command line
     let isRunning = false;
     
     if (process.platform === 'win32') {
       try {
-        const { stdout } = await execAsync(`tasklist /FI "WINDOWTITLE eq *${name}*" /FO CSV`);
-        isRunning = stdout.includes('node.exe') || stdout.includes('vite');
+        // Check for node processes with the project path in command line
+        const { stdout } = await execAsync(
+          `wmic process where "commandline like '%${name}%' and (name='node.exe' or name='node')" get processid`
+        );
+        isRunning = stdout.trim().length > 0 && 
+                   !stdout.includes('No Instance(s)') && 
+                   stdout.includes('ProcessId');
       } catch {
-        // Try checking for node processes with the project name
+        // Fallback: check if port 5173 (default Vite port) is in use
+        // This is a simple heuristic - projects might use different ports
         try {
-          const { stdout } = await execAsync(`wmic process where "commandline like '%${name}%' and name='node.exe'" get processid`);
-          isRunning = stdout.trim().length > 0 && !stdout.includes('No Instance(s)');
+          isRunning = await isPortInUse(5173);
         } catch {
           isRunning = false;
         }
       }
     } else {
       try {
-        const { stdout } = await execAsync(`ps aux | grep -i "${name}" | grep -v grep`);
+        const { stdout } = await execAsync(
+          `ps aux | grep -i "[n]ode.*${name}" | grep -v grep`
+        );
         isRunning = stdout.trim().length > 0;
       } catch {
         isRunning = false;

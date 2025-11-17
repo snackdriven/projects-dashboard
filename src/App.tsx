@@ -140,7 +140,7 @@ function App() {
                   className={`bg-card border border-border rounded-lg p-6 cursor-pointer transition-all duration-200 ${
                     isFocused
                       ? 'shadow-lg scale-105'
-                      : 'hover:shadow-md hover:scale-102'
+                      : 'hover:shadow-md hover:scale-[1.02]'
                   }`}
                   onClick={() => {
                     if (!isRunning && !isLaunching) {
