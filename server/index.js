@@ -2,8 +2,9 @@ import express from 'express';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-import { readdir } from 'fs/promises';
+import { dirname, join, resolve, normalize } from 'path';
+import { readdir, access } from 'fs/promises';
+import { constants } from 'fs';
 
 const execAsync = promisify(exec);
 const __filename = fileURLToPath(import.meta.url);
@@ -13,14 +14,40 @@ const app = express();
 const PORT = 3001;
 
 // Projects directory (one level up from projects-dashboard)
-const PROJECTS_DIR = join(__dirname, '..', '..', 'projects');
+const PROJECTS_DIR = resolve(join(__dirname, '..', '..', 'projects'));
+
+// Sanitize project name to prevent path traversal and command injection
+function sanitizeProjectName(name) {
+  // Remove any path separators, dots that could be used for traversal
+  // Only allow alphanumeric, hyphens, underscores
+  const sanitized = name.replace(/[^a-zA-Z0-9_-]/g, '');
+  // Ensure it's not empty and not just dots
+  if (!sanitized || sanitized.length === 0 || sanitized.length > 100) {
+    throw new Error('Invalid project name');
+  }
+  return sanitized;
+}
+
+// Validate project path is within PROJECTS_DIR (prevent path traversal)
+function validateProjectPath(projectPath) {
+  const normalized = normalize(resolve(projectPath));
+  const baseDir = normalize(PROJECTS_DIR);
+  if (!normalized.startsWith(baseDir)) {
+    throw new Error('Invalid project path');
+  }
+  return normalized;
+}
 
 app.use(express.json());
 app.use(express.static('dist'));
 
-// CORS middleware
+// CORS middleware - restrict to localhost for security
 app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin;
+  // Allow localhost and 127.0.0.1 for local development
+  if (origin && (origin.includes('localhost') || origin.includes('127.0.0.1'))) {
+    res.header('Access-Control-Allow-Origin', origin);
+  }
   res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.header('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') {
@@ -64,8 +91,14 @@ async function isPortInUse(port) {
 // Get project status
 app.get('/api/projects/:name/status', async (req, res) => {
   try {
-    const { name } = req.params;
-    const projectPath = join(PROJECTS_DIR, name);
+    let name;
+    try {
+      name = sanitizeProjectName(req.params.name);
+    } catch (error) {
+      return res.status(400).json({ error: 'Invalid project name' });
+    }
+    
+    const projectPath = validateProjectPath(join(PROJECTS_DIR, name));
     
     // Check if the dev server process is running by looking for node processes
     // that have the project name in their command line
@@ -73,10 +106,18 @@ app.get('/api/projects/:name/status', async (req, res) => {
     
     if (process.platform === 'win32') {
       try {
-        // Check for node processes with the project path in command line
-        const { stdout } = await execAsync(
-          `wmic process where "commandline like '%${name}%' and (name='node.exe' or name='node')" get processid`
-        );
+        // Escape the name for use in WMIC query to prevent injection
+        const escapedName = name.replace(/'/g, "''");
+        // Use timeout to prevent hanging
+        const { stdout } = await Promise.race([
+          execAsync(
+            `wmic process where "commandline like '%${escapedName}%' and (name='node.exe' or name='node')" get processid`,
+            { timeout: 5000 }
+          ),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), 5000)
+          )
+        ]);
         isRunning = stdout.trim().length > 0 && 
                    !stdout.includes('No Instance(s)') && 
                    stdout.includes('ProcessId');
@@ -91,9 +132,17 @@ app.get('/api/projects/:name/status', async (req, res) => {
       }
     } else {
       try {
-        const { stdout } = await execAsync(
-          `ps aux | grep -i "[n]ode.*${name}" | grep -v grep`
-        );
+        // Escape name for shell safety
+        const escapedName = name.replace(/[^a-zA-Z0-9_-]/g, '');
+        const { stdout } = await Promise.race([
+          execAsync(
+            `ps aux | grep -i "[n]ode.*${escapedName}" | grep -v grep`,
+            { timeout: 5000 }
+          ),
+          new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('Timeout')), 5000)
+          )
+        ]);
         isRunning = stdout.trim().length > 0;
       } catch {
         isRunning = false;
@@ -110,30 +159,51 @@ app.get('/api/projects/:name/status', async (req, res) => {
 // Launch a project
 app.post('/api/projects/:name/launch', async (req, res) => {
   try {
-    const { name } = req.params;
-    const projectPath = join(PROJECTS_DIR, name);
-    
-    // Check if project directory exists
+    let name;
     try {
+      name = sanitizeProjectName(req.params.name);
+    } catch (error) {
+      return res.status(400).json({ error: 'Invalid project name' });
+    }
+    
+    const projectPath = validateProjectPath(join(PROJECTS_DIR, name));
+    
+    // Check if project directory exists and is accessible
+    try {
+      await access(projectPath, constants.F_OK);
       await readdir(projectPath);
     } catch {
       return res.status(404).json({ error: 'Project not found' });
     }
     
+    // Check if package.json exists
+    try {
+      await access(join(projectPath, 'package.json'), constants.F_OK);
+    } catch {
+      return res.status(400).json({ error: 'Project does not have package.json' });
+    }
+    
     // Launch the project in a new terminal window
+    // Use the validated path (already normalized and safe)
     let command;
     if (process.platform === 'win32') {
       // Windows: open new cmd window and run npm run dev
-      command = `start cmd.exe /K "cd /d "${projectPath}" && npm run dev"`;
+      // Path is already validated, but escape quotes for cmd
+      const safePath = projectPath.replace(/"/g, '""');
+      command = `start cmd.exe /K "cd /d "${safePath}" && npm run dev"`;
     } else if (process.platform === 'darwin') {
       // macOS: open new terminal window
-      command = `osascript -e 'tell app "Terminal" to do script "cd ${projectPath} && npm run dev"'`;
+      // Escape single quotes and special chars for osascript
+      const safePath = projectPath.replace(/'/g, "'\\''");
+      command = `osascript -e 'tell app "Terminal" to do script "cd '${safePath}' && npm run dev"'`;
     } else {
       // Linux: open new terminal
-      command = `gnome-terminal -- bash -c "cd ${projectPath} && npm run dev; exec bash"`;
+      // Escape for bash
+      const safePath = projectPath.replace(/'/g, "'\\''");
+      command = `gnome-terminal -- bash -c "cd '${safePath}' && npm run dev; exec bash"`;
     }
     
-    exec(command, (error) => {
+    exec(command, { timeout: 10000 }, (error) => {
       if (error) {
         console.error('Error launching project:', error);
         return res.status(500).json({ error: 'Failed to launch project' });

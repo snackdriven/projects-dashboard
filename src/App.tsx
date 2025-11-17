@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { Play, Circle, Loader2, Terminal } from 'lucide-react'
 import './App.css'
@@ -12,28 +12,29 @@ interface ProjectStatus {
   running: boolean
 }
 
+// Constants
+const STATUS_CHECK_INTERVAL = 3000 // 3 seconds
+const LAUNCH_DEBOUNCE_DELAY = 2000 // 2 seconds
+
 function App() {
   const [projects, setProjects] = useState<Project[]>([])
   const [statuses, setStatuses] = useState<Record<string, ProjectStatus>>({})
   const [loading, setLoading] = useState(true)
   const [launching, setLaunching] = useState<Record<string, boolean>>({})
   const [focusedIndex, setFocusedIndex] = useState(0)
+  const launchingRef = useRef<Set<string>>(new Set())
 
+  // Reset focused index when projects change
   useEffect(() => {
-    fetchProjects()
-    const interval = setInterval(checkStatuses, 3000) // Check every 3 seconds
-    return () => clearInterval(interval)
-  }, [])
+    setFocusedIndex(0)
+  }, [projects.length])
 
-  useEffect(() => {
-    if (projects.length > 0) {
-      checkStatuses()
-    }
-  }, [projects])
-
-  const fetchProjects = async () => {
+  const fetchProjects = useCallback(async () => {
     try {
       const response = await fetch('/api/projects')
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
       const data = await response.json()
       setProjects(data)
       setLoading(false)
@@ -41,41 +42,90 @@ function App() {
       console.error('Error fetching projects:', error)
       setLoading(false)
     }
-  }
+  }, [])
 
-  const checkStatuses = async () => {
-    for (const project of projects) {
+  const checkStatuses = useCallback(async () => {
+    if (projects.length === 0) return
+    
+    // Use Promise.allSettled for parallel status checks (2025 best practice)
+    const statusPromises = projects.map(async (project) => {
       try {
-        const response = await fetch(`/api/projects/${project.name}/status`)
+        const response = await fetch(`/api/projects/${encodeURIComponent(project.name)}/status`)
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
         const status: ProjectStatus = await response.json()
-        setStatuses(prev => ({ ...prev, [project.name]: status }))
+        return { name: project.name, status }
       } catch (error) {
         console.error(`Error checking status for ${project.name}:`, error)
+        return { name: project.name, status: null }
       }
-    }
-  }
+    })
 
-  const handleLaunch = async (project: Project) => {
+    const results = await Promise.allSettled(statusPromises)
+    results.forEach((result) => {
+      if (result.status === 'fulfilled' && result.value.status) {
+        setStatuses(prev => ({ ...prev, [result.value.name]: result.value.status }))
+      }
+    })
+  }, [projects])
+
+  // Set up status checking interval
+  useEffect(() => {
+    fetchProjects()
+  }, [fetchProjects])
+
+  useEffect(() => {
+    if (projects.length === 0) return
+    
+    // Initial check
+    checkStatuses()
+    
+    // Set up interval
+    const interval = setInterval(checkStatuses, STATUS_CHECK_INTERVAL)
+    return () => clearInterval(interval)
+  }, [projects, checkStatuses])
+
+  const handleLaunch = useCallback(async (project: Project) => {
+    // Prevent duplicate launches (race condition fix)
+    if (launchingRef.current.has(project.name) || statuses[project.name]?.running) {
+      return
+    }
+
+    launchingRef.current.add(project.name)
     setLaunching(prev => ({ ...prev, [project.name]: true }))
+    
     try {
-      const response = await fetch(`/api/projects/${project.name}/launch`, {
+      const response = await fetch(`/api/projects/${encodeURIComponent(project.name)}/launch`, {
         method: 'POST',
       })
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      
       const data = await response.json()
       if (data.success) {
         // Wait a bit then check status
         setTimeout(() => {
           checkStatuses()
           setLaunching(prev => ({ ...prev, [project.name]: false }))
-        }, 2000)
+          launchingRef.current.delete(project.name)
+        }, LAUNCH_DEBOUNCE_DELAY)
+      } else {
+        setLaunching(prev => ({ ...prev, [project.name]: false }))
+        launchingRef.current.delete(project.name)
       }
     } catch (error) {
       console.error('Error launching project:', error)
       setLaunching(prev => ({ ...prev, [project.name]: false }))
+      launchingRef.current.delete(project.name)
     }
-  }
+  }, [statuses, checkStatuses])
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+    if (projects.length === 0) return
+
     if (e.key === 'ArrowDown') {
       e.preventDefault()
       setFocusedIndex(prev => Math.min(prev + 1, projects.length - 1))
@@ -85,11 +135,11 @@ function App() {
     } else if (e.key === 'Enter' && projects[focusedIndex]) {
       e.preventDefault()
       const project = projects[focusedIndex]
-      if (!statuses[project.name]?.running) {
+      if (!statuses[project.name]?.running && !launching[project.name]) {
         handleLaunch(project)
       }
     }
-  }
+  }, [projects, focusedIndex, statuses, launching, handleLaunch])
 
   if (loading) {
     return (
