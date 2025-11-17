@@ -13,8 +13,8 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = 3001;
 
-// Projects directory (one level up from projects-dashboard)
-const PROJECTS_DIR = resolve(join(__dirname, '..', '..', 'projects'));
+// Projects directory (within projects-dashboard)
+const PROJECTS_DIR = resolve(join(__dirname, '..', 'projects'));
 
 // Sanitize project name to prevent path traversal and command injection
 function sanitizeProjectName(name) {

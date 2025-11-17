@@ -36,3 +36,6 @@ out
 # TypeScript
 *.tsbuildinfo
 
+# Projects directory (each project should be version controlled separately)
+projects/
+
