@@ -1,0 +1,58 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "namedInputs": {
+    "sharedGlobals": [
+      "{workspaceRoot}/tsconfig.json",
+      "{workspaceRoot}/tailwind.config.js",
+      "{workspaceRoot}/postcss.config.js",
+      {
+        "env": "NODE_ENV"
+      }
+    ],
+    "default": [
+      "{projectRoot}/**/*",
+      "sharedGlobals"
+    ]
+  },
+  "targetDefaults": {
+    "build": {
+      "dependsOn": [
+        "^build"
+      ],
+      "outputs": [
+        "{projectRoot}/dist/**",
+        "{projectRoot}/.next/**",
+        "!{projectRoot}/.next/cache/**"
+      ],
+      "cache": true
+    },
+    "dev": {
+      "cache": false
+    },
+    "lint": {
+      "outputs": [
+        "{projectRoot}/.eslintcache"
+      ],
+      "cache": true
+    },
+    "type-check": {
+      "outputs": [
+        "{projectRoot}/node_modules/.tmp/**",
+        "{projectRoot}/*.tsbuildinfo"
+      ],
+      "cache": true
+    },
+    "test": {
+      "dependsOn": [
+        "build"
+      ],
+      "outputs": [
+        "{projectRoot}/coverage/**"
+      ],
+      "cache": true
+    },
+    "clean": {
+      "cache": false
+    }
+  }
+}

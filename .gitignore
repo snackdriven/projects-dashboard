@@ -39,3 +39,11 @@ out
 # Projects directory (each project should be version controlled separately)
 projects/
 
+.mcp.json
+
+
+
+.nx/cache
+.nx/workspace-data
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

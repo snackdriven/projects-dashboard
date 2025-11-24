@@ -1,13 +1,12 @@
 @echo off
-cd /d "%~dp0"
+echo Launching Projects Dashboard in WSL for better performance...
+echo.
 
-REM Check if node_modules exists, if not install dependencies
-if not exist "node_modules" (
-  echo Installing dependencies...
-  call npm install
-)
+REM Get the Windows path and convert to WSL path
+set "WINDOWS_PATH=%~dp0"
+REM Remove trailing backslash
+set "WINDOWS_PATH=%WINDOWS_PATH:~0,-1%"
 
-REM Start the dashboard
-echo Starting Projects Dashboard...
-call npm run dev
+REM Launch in WSL - this will use the launch.sh script
+wsl bash -c "cd '%WINDOWS_PATH%' && bash launch.sh"
 

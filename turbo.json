@@ -1,0 +1,49 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "outputs": [
+        "dist/**",
+        ".next/**",
+        "!.next/cache/**"
+      ],
+      "env": [
+        "NODE_ENV",
+        "VITE_*"
+      ]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "lint": {
+      "outputs": [
+        ".eslintcache"
+      ]
+    },
+    "type-check": {
+      "outputs": [
+        "node_modules/.tmp/**",
+        "*.tsbuildinfo"
+      ]
+    },
+    "test": {
+      "dependsOn": ["build"],
+      "outputs": [
+        "coverage/**"
+      ]
+    },
+    "clean": {
+      "cache": false
+    }
+  },
+  "globalEnv": [
+    "NODE_ENV"
+  ],
+  "globalDependencies": [
+    "tsconfig.json",
+    "tailwind.config.js",
+    "postcss.config.js"
+  ]
+}

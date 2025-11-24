@@ -1,0 +1,29 @@
+{
+  "active": [
+    {"key": "WRKA-3808", "summary": "QA | O&E UAF - Shelter / Treatment Tab Updates", "status": "Backlog", "component": "OC O&E Mobile"},
+    {"key": "WRKA-3807", "summary": "QA | O&E UAF - Tally Validations Across All Tabs", "status": "Backlog", "component": "OC O&E Mobile", "labels": ["O&E"]},
+    {"key": "WRKA-3806", "summary": "QA | O&E UAF - Demographics Tab Updates", "status": "Backlog", "component": "OC O&E Mobile"},
+    {"key": "WRKA-3804", "summary": "QA | TAR - Un-require and Hide Discharge placement field", "status": "Backlog", "component": "OC TAR"},
+    {"key": "WMB-3217", "summary": "QA | dev | NHHA: Treatment Add Authorization", "status": "To Do", "component": "NHHA"},
+    {"key": "WMB-3215", "summary": "QA | dev | NHHA: Update profile taxonomy", "status": "To Do", "component": "NHHA", "labels": ["NHHA"]}
+  ],
+  "completed": [
+    {"key": "WRKA-3793", "summary": "QA | TAR - CIN showing on Dashboard after creating a TAR", "status": "Done", "component": "OC TAR", "labels": ["TAR"]},
+    {"key": "WRKA-3791", "summary": "QA | OC URP - Source program disappears when using edit referral button", "status": "Done", "component": "URP", "labels": ["URP"]},
+    {"key": "WRKA-3802", "summary": "QA | TAR - TAR Type & TAR Number is missing", "status": "Done", "component": "OC TAR", "labels": ["TAR"]},
+    {"key": "WRKA-3792", "summary": "QA | OC TAR: Received date and due date are slightly off", "status": "Done", "component": "OC TAR", "labels": ["TAR"]},
+    {"key": "WRKA-3794", "summary": "QA | TAR Hospital & HCA - Hide Discharge placement field in Overview", "status": "Done", "component": "OC TAR", "labels": ["TAR"]},
+    {"key": "WRKA-3795", "summary": "QA | O&E UAF - Rideshare Tab Updates", "status": "Done", "component": "OC O&E Mobile", "labels": ["O&E"]},
+    {"key": "WRKA-3789", "summary": "QA | O&E UAF - Name/Location Tab Updates", "status": "Done", "component": "OC O&E Mobile", "labels": ["O&E"]},
+    {"key": "WRKA-3773", "summary": "QA | TAR - Update Office Deferral Letter", "status": "Done", "component": "OC TAR", "labels": ["TAR"]},
+    {"key": "WMB-3182", "summary": "QA | NHHA: Cases - Case Status Tab", "status": "Done", "component": "NHHA", "labels": ["NHHA"]},
+    {"key": "WRKA-3775", "summary": "QA | TAR - Update digitized appeal letter document", "status": "Done", "component": "OC TAR", "labels": ["TAR"]},
+    {"key": "WRKA-3738", "summary": "QA | O&E OCC - Update the UAF Survey for 2025", "status": "Done", "component": "OC O&E Mobile", "labels": ["O&E"]},
+    {"key": "WRKA-3785", "summary": "QA | URP - Hide Action Based Dashboard Pills for Member Access Line Zone", "status": "Done", "component": "URP", "labels": ["URP"]},
+    {"key": "WRKA-3772", "summary": "QA | TAR - Update Clinical Denial (NOABD) Letter", "status": "Done", "component": "OC TAR", "labels": ["TAR"]},
+    {"key": "WMB-3180", "summary": "QA | NHHA: Cases - Case Status Tab - Search Bar and expand button", "status": "Done", "component": "NHHA", "labels": ["NHHA"]},
+    {"key": "WMB-3185", "summary": "QA | NHHA: Case status - Admitted status needs date/time fields", "status": "Done", "component": "NHHA", "labels": ["NHHA"]},
+    {"key": "WMB-3184", "summary": "QA | NHHA: Case status history - Update business rules for editing date/time", "status": "Done", "component": "NHHA", "labels": ["NHHA"]},
+    {"key": "WRKA-3777", "summary": "QA | TAR - Add Jennifer Vu Brinkley and Raven Lindo as HCA clinicians", "status": "Done", "component": "OC TAR", "labels": ["TAR"]}
+  ]
+}
