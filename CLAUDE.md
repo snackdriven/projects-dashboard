@@ -220,7 +220,7 @@ Several projects require API credentials (Google Calendar, Spotify, Atlassian/JI
 - `.env` - Root credentials (shared services)
 - `projects/*/\.env` - Project-specific credentials
 
-See `docs/credential_setup.md` for detailed setup.
+See `credential_setup.md` for detailed setup.
 
 ## Adding New Projects
 
@@ -348,23 +348,43 @@ pnpm build --filter @projects-dashboard/ui  # Build shared package
 
 | File | Purpose |
 |------|---------|
-| README.md | Project overview and quick start |
-| CLAUDE.md | This file - development guide |
+| readme.md | Project overview and quick start |
+| claude.md | This file - development guide |
 | adding_projects.md | Guide for adding new projects |
 | git_guide.md | Git structure and workflows |
 | port_assignments.md | Port assignments for all projects |
-| docs/credential_setup.md | API credential setup guide |
-| docs/monorepo_setup.md | Monorepo architecture and workflows |
+| credential_setup.md | API credential setup guide |
+| monorepo_setup.md | Monorepo architecture and workflows |
+| graphiti-quickstart.md | Graphiti + chronicle integration guide |
 
 ## MCP Servers
 
 The project uses MCP (Model Context Protocol) servers for enhanced AI assistance:
 
 - **Atlassian/JIRA:** Ticket access and management
-- **Memory:** Knowledge graph for tracking project state
-- **Claude-Flow:** Swarm orchestration for parallel development
+- **Graphiti:** Temporally-aware knowledge graph with AI-powered entity extraction (see `projects/graphiti/GRAPHITI_SETUP.md`)
+- **chronicle:** Timeline events and key-value storage for structured data
+- **context7:** Up-to-date library documentation
+- **chrome-devtools:** Browser automation and debugging
 
 Configuration in `.mcp.json` and `.env` files.
+
+### Memory Storage Architecture
+
+The project uses two complementary memory systems:
+
+1. **Graphiti** (`projects/graphiti/`) - Knowledge graph for relationships and entities
+   - Entity extraction from conversations
+   - Semantic search across knowledge
+   - Temporal tracking (what changed when)
+   - Best for: Concept relationships, entity management
+
+2. **chronicle** (`projects/chronicle/`) - Timeline and key-value storage
+   - Time-based event logging
+   - Simple configuration storage
+   - Best for: Event logs, structured data
+
+See `projects/graphiti/GRAPHITI_SETUP.md` for complete setup documentation.
 
 ## Important Notes
 

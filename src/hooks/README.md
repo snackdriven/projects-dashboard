@@ -1,6 +1,6 @@
 # Memory Management Hooks
 
-Custom React hooks for interacting with the memory-shack MCP server.
+Custom React hooks for interacting with the chronicle MCP server.
 
 ## Overview
 
@@ -295,10 +295,10 @@ function MemoryManager() {
 
 ## MCP Integration
 
-These hooks communicate with the memory-shack MCP server via the backend API:
+These hooks communicate with the chronicle MCP server via the backend API:
 
 ```
-Frontend Hook ’ POST /api/mcp/memory-shack/{tool_name} ’ MCP Server ’ SQLite DB
+Frontend Hook ï¿½ POST /api/mcp/chronicle/{tool_name} ï¿½ MCP Server ï¿½ SQLite DB
 ```
 
 ### Available MCP Tools
@@ -314,7 +314,7 @@ Frontend Hook ’ POST /api/mcp/memory-shack/{tool_name} ’ MCP Server ’ SQLite DB
 - `list_memories`
 - `delete_memory`
 
-See [memory-shack documentation](../../projects/memory-shack/README.md) for details.
+See [chronicle documentation](../../projects/chronicle/README.md) for details.
 
 ---
 

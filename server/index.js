@@ -839,11 +839,11 @@ app.post('/api/projects/:name/close', async (req, res) => {
 });
 
 // ============================================================================
-// MCP Proxy Endpoint - Memory Shack Operations
+// MCP Proxy Endpoint - Chronicle Operations
 // ============================================================================
 
 /**
- * Valid MCP tool names for memory-shack server
+ * Valid MCP tool names for chronicle server
  * Timeline tools: store, query, update, delete events
  * Memory tools: KV storage operations
  */
@@ -874,7 +874,7 @@ const VALID_MCP_TOOLS = {
 };
 
 /**
- * Call MCP tool by spawning the memory-shack server process
+ * Call MCP tool by spawning the chronicle server process
  *
  * @param {string} toolName - Name of the MCP tool to call
  * @param {Record<string, any>} args - Tool arguments
@@ -882,15 +882,15 @@ const VALID_MCP_TOOLS = {
  */
 async function callMCPTool(toolName, args = {}) {
   const { spawn } = await import('child_process');
-  const mcpServerPath = resolve(join(__dirname, '..', 'projects', 'memory-shack', 'dist', 'mcp-server.js'));
-  const dbPath = resolve(join(__dirname, '..', '.swarm', 'memory.db'));
+  const mcpServerPath = resolve(join(__dirname, '..', 'projects', 'chronicle', 'dist', 'mcp-server.js'));
+  const dbPath = resolve(join(__dirname, '..', '.swarm', 'chronicle.db'));
 
   return new Promise((resolve, reject) => {
     // Spawn MCP server process
     const mcpProcess = spawn('node', [mcpServerPath], {
       env: {
         ...process.env,
-        MEMORY_DB_PATH: dbPath,
+        CHRONICLE_DB_PATH: dbPath,
       },
       stdio: ['pipe', 'pipe', 'pipe'],
     });
@@ -1001,8 +1001,8 @@ async function callMCPTool(toolName, args = {}) {
 }
 
 /**
- * POST /api/mcp/memory-shack
- * Proxy endpoint for memory-shack MCP server operations
+ * POST /api/mcp/chronicle
+ * Proxy endpoint for chronicle MCP server operations
  *
  * Request body:
  * {
@@ -1021,7 +1021,7 @@ async function callMCPTool(toolName, args = {}) {
  *   error: string       // Error message
  * }
  */
-app.post('/api/mcp/memory-shack', async (req, res) => {
+app.post('/api/mcp/chronicle', async (req, res) => {
   const startTime = Date.now();
 
   try {
@@ -1091,10 +1091,10 @@ app.post('/api/mcp/memory-shack', async (req, res) => {
 });
 
 /**
- * GET /api/mcp/memory-shack/tools
+ * GET /api/mcp/chronicle/tools
  * List all available MCP tools with descriptions
  */
-app.get('/api/mcp/memory-shack/tools', (req, res) => {
+app.get('/api/mcp/chronicle/tools', (req, res) => {
   const tools = Object.entries(VALID_MCP_TOOLS).map(([name, info]) => ({
     name,
     category: info.category,
@@ -1114,12 +1114,49 @@ app.get('/api/mcp/memory-shack/tools', (req, res) => {
 });
 
 // ============================================================================
+// Error Handlers
+// ============================================================================
+
+// Handle uncaught exceptions (don't crash the server)
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught Exception:', error);
+  console.error('Stack:', error.stack);
+  // Don't exit - log and continue
+});
+
+// Handle unhandled promise rejections (don't crash the server)
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('❌ Unhandled Rejection at:', promise);
+  console.error('Reason:', reason);
+  // Don't exit - log and continue
+});
+
+// Graceful shutdown on SIGTERM
+process.on('SIGTERM', () => {
+  console.log('⚠️  SIGTERM received, shutting down gracefully...');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+// Graceful shutdown on SIGINT (Ctrl+C)
+process.on('SIGINT', () => {
+  console.log('\n⚠️  SIGINT received, shutting down gracefully...');
+  server.close(() => {
+    console.log('✅ Server closed');
+    process.exit(0);
+  });
+});
+
+// ============================================================================
 // Server Startup
 // ============================================================================
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`🚀 Dashboard server running on http://localhost:${PORT}`);
   console.log(`📁 Projects directory: ${PROJECTS_DIR}`);
-  console.log(`🏠 MCP Proxy: /api/mcp/memory-shack (${Object.keys(VALID_MCP_TOOLS).length} tools)`);
+  console.log(`🏠 MCP Proxy: /api/mcp/chronicle (${Object.keys(VALID_MCP_TOOLS).length} tools)`);
+  console.log(`🛡️  Error handlers: Active`);
 });
 

@@ -26,7 +26,7 @@ const PROJECT_PORTS: Record<string, number> = {
   'react-ts-templates': 5177,
   'task-manager': 5178,
   'quantified-life': 5179,
-  'memory-shack': 3002, // HTTP API server (not Vite)
+  'chronicle': 3002, // HTTP API server (not Vite)
 }
 
 export function DashboardPage() {

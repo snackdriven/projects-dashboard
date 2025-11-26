@@ -26,8 +26,15 @@ dist-ssr
 # Environment variables
 .env
 .env.local
+.env.production
 .env.production.local
 .env.development.local
+.env.test.local
+
+# IMPORTANT: .env.defaults files should be committed!
+# They contain non-sensitive project-specific configuration
+!.env.defaults
+!**/.env.defaults
 
 # Build outputs
 build

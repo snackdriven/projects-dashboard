@@ -1,7 +1,7 @@
 /**
  * Memory Manager Types
  *
- * Type definitions for timeline events and KV memories from memory-shack MCP server
+ * Type definitions for timeline events and KV memories from chronicle MCP server
  */
 
 // Timeline Event Types

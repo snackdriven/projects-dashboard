@@ -35,7 +35,7 @@ export const mockTimelineEvents: TimelineEvent[] = [
     type: 'task_completed',
     title: 'Review PR #234',
     namespace: 'dev',
-    metadata: { project: 'memory-shack', status: 'approved' },
+    metadata: { project: 'chronicle', status: 'approved' },
   },
   {
     id: '5',
@@ -230,7 +230,7 @@ export const mockKVMemories: KVMemory[] = [
   },
   {
     key: 'cache:projects:list',
-    value: ['dashboard', 'memory-shack', 'jira-wrapper'],
+    value: ['dashboard', 'chronicle', 'jira-wrapper'],
     namespace: 'cache',
     ttl: 900,
   },

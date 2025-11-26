@@ -148,7 +148,7 @@ export function MemoryManagerPage() {
   const testAPI = async () => {
     try {
       console.log('[testAPI] Starting API test...');
-      const response = await fetch('http://localhost:3001/api/mcp/memory-shack', {
+      const response = await fetch('http://localhost:3001/api/mcp/chronicle', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

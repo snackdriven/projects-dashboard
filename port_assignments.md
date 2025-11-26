@@ -20,7 +20,7 @@ Most projects use sequential ports in the 5173-5179 range (standard Vite develop
 | react-ts-templates | 5177 | Vite Frontend | http://localhost:5177 |
 | task-manager | 5178 | Vite Frontend | http://localhost:5178 |
 | quantified-life | 5179 | Vite Frontend | http://localhost:5179 |
-| memory-shack | 3002 | Backend API | http://localhost:3002/api/* |
+| chronicle | 3002 | Backend API | http://localhost:3002/api/* |
 
 ## Configuration Files
 
@@ -64,6 +64,6 @@ When adding a new project to the dashboard:
 - **Ports 5173-5179**: Vite frontend development servers
 - **Port 5180**: Dashboard frontend (avoiding conflict with projects)
 - **Port 3001**: Dashboard backend API
-- **Port 3002**: Memory Shack backend API
+- **Port 3002**: Chronicle backend API
 
 This keeps all frontend development ports in the 5xxx range and separates backend APIs to the 3xxx range.

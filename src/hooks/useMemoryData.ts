@@ -8,7 +8,7 @@ import { useState, useEffect, useCallback } from 'react';
 import type { TimelineEvent, TimelineResponse, KVMemory, MCPResponse } from '@/types/memory';
 
 // MCP API base URL - points to backend server
-const MCP_API_BASE = 'http://localhost:3001/api/mcp/memory-shack';
+const MCP_API_BASE = 'http://localhost:3001/api/mcp/chronicle';
 
 /**
  * Parse MCP response and extract data

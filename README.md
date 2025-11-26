@@ -221,7 +221,7 @@ The setup wizard will:
 - Configure the Atlassian MCP server
 - Backup existing credentials
 
-See **`docs/CREDENTIAL_SETUP.md`** for detailed manual setup instructions.
+See **`credential_setup.md`** for detailed manual setup instructions.
 
 ### What Credentials You Need
 
@@ -235,11 +235,12 @@ See **`docs/CREDENTIAL_SETUP.md`** for detailed manual setup instructions.
 
 | File | Description |
 |------|-------------|
-| **docs/credential_setup.md** | Complete credential setup guide |
-| **docs/monorepo_setup.md** | Monorepo architecture and workflows |
+| **credential_setup.md** | Complete credential setup guide |
+| **monorepo_setup.md** | Monorepo architecture and workflows |
 | **adding_projects.md** | Guide for adding new projects |
 | **git_guide.md** | Git structure and workflows |
 | **port_assignments.md** | Port assignments for all projects |
+| **graphiti-quickstart.md** | Graphiti + chronicle integration |
 
 ## WSL Performance
 
@@ -261,7 +262,7 @@ You're in Windows terminal, not WSL. Either:
 ```bash
 ./test-credentials.sh    # Test all API connections
 ```
-See `docs/CREDENTIAL_SETUP.md` for troubleshooting specific services.
+See `credential_setup.md` for troubleshooting specific services.
 
 ### Atlassian MCP server errors
 1. Verify `.env` file exists with correct credentials

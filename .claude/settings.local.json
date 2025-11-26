@@ -1,0 +1,129 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(xargs:*)",
+      "Bash(npm install:*)",
+      "Bash(pm2 start:*)",
+      "Bash(pm2 logs:*)",
+      "Bash(pm2 status:*)",
+      "Bash(head:*)",
+      "Bash(tail:*)",
+      "Bash(wc:*)",
+      "Bash(node:*)",
+      "Bash(timeout 120 node:*)",
+      "SlashCommand(/ultra-think How to integrate quantified-life with chronicle for JIRA/Spotify/Calendar timeline tracking? User correctly noted all three architecture options (read-only, central hub, event-driven) require building collectors. Questions: (1) Are there simpler alternatives that leverage existing tools/APIs without custom collectors? (2) What about using existing integrations (Zapier, IFTTT, n8n, webhooks)? (3) Could we use chronicle's existing JIRA import script differently? (4) What about browser extensions or desktop apps that auto-log activity? (5) Should we pivot to different data sources that have easier APIs? (6) What creative low-code/no-code solutions exist? (7) Could we use existing quantified-self tools and import their data? (8) What's the MVP - what's the absolute minimum to get value? Context: We have 1,507 JIRA tickets already in chronicle via CSV import. Chronicle is an MCP server with SQLite backend for timeline events. Quantified-life is a React app (currently uses localStorage). Goal: Unified timeline view of work/music/calendar without building complex polling infrastructure.)",
+      "SlashCommand(/ultra-think How to parallelize building automatic Spotify/Calendar syncing for quantified-life + chronicle integration? Components needed: (1) Spotify OAuth collector with incremental fetching (fetches recently played tracks since last sync), (2) Google Calendar OAuth collector with incremental fetching (fetches events modified since last sync), (3) Last sync timestamp tracking (store in chronicle KV memory), (4) Smart caching (skip sync if last sync < 1 hour ago), (5) Sync status API endpoint for UI, (6) \"Sync Now\" button in React UI, (7) OAuth setup documentation. Tech stack: Node.js with spotify-web-api-node and googleapis libraries, Express backend already exists at projects/quantified-life/server/index.js, Chronicle MCP server at localhost:3001. Goal: Identify maximum parallelization opportunities - what can be built simultaneously by different agents/developers? What are the dependencies? What's the critical path?)",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs",
+      "Bash(timeout 10 pnpm dev:frontend:*)",
+      "Bash(./scripts/sync-env.sh:*)",
+      "Bash(git check-ignore:*)",
+      "Bash(curl:*)",
+      "Bash(docker exec:*)",
+      "Bash(docker ps:*)",
+      "Bash(docker inspect:*)",
+      "mcp__memory__read_graph",
+      "SlashCommand(/ultra-think Should we (1) Start Graphiti server and migrate memory MCP data to FalkorDB, or (3) Build a simple web UI to visualize the existing memory MCP data? Context: User has two knowledge graph systems - memory MCP (JSON file, full of data with 100+ entities including JIRA tickets, Spotify history, calendar events, user preferences) and Graphiti (FalkorDB/Redis, currently empty, server not running). FalkorDB Browser at localhost:3000 exists but shows empty. Memory MCP works via mcp__memory__* tools. Graphiti would require: starting server, migrating data, maintaining two systems. Web UI would require: new React page in projects-dashboard, API endpoint to read memory MCP data, visualization components. Consider: complexity, maintenance burden, actual value delivered, existing infrastructure, user's quantified-life project goals.)",
+      "Bash(source .venv/bin/activate)",
+      "Bash(pip show:*)",
+      "Bash(uv sync:*)",
+      "Bash(lsof:*)",
+      "Bash(fuser:*)",
+      "Bash(uv run python:*)",
+      "Bash(source .env)",
+      "mcp__memory__create_entities",
+      "SlashCommand(/ultra-think Is it worth rolling our own knowledge graph solution instead of using Graphiti? Context: User has existing memory MCP with 239 entities (JIRA tickets, person, artist, calendar, project types). Graphiti migration has hit multiple issues: (1) Anthropic rate limits (30k tokens/min), (2) $2+ spent with minimal results, (3) Model compatibility issues (Sonnet works but 90sec/entity, Haiku has max_tokens mismatch). What does Graphiti provide? Semantic search, entity extraction, temporal tracking, relationship inference. User goals: View knowledge graph visually, semantic query, auto-extract entities. ALTERNATIVES TO CONSIDER: (1) Just use memory MCP as-is with a custom visualization UI, (2) Roll our own with embeddings + vector DB (no LLM extraction), (3) Use simpler tools like LangChain memory or LlamaIndex, (4) Use a different knowledge graph like Neo4j with manual entity creation, (5) Build lightweight entity extraction ourselves. KEY QUESTIONS: What's the actual value of AI-powered entity extraction? Is the existing memory MCP structure good enough? What's minimum viable for the user's actual needs (timeline visualization, semantic search)?)",
+      "Bash(cat:*)",
+      "mcp__chronicle__bulk_store_memories",
+      "mcp__chronicle__get_memory_stats",
+      "mcp__chronicle__list_memories",
+      "mcp__chronicle__search_memories",
+      "mcp__memory__search_nodes",
+      "Bash(source:*)",
+      "Bash(jq:*)",
+      "Bash(echo:*)",
+      "Bash(op item list:*)",
+      "Bash(uv pip show:*)",
+      "SlashCommand(/ultra-think How to properly import 234 Confluence pages into Graphiti with OpenAI (gpt-4o-mini) for entity extraction? Current blockers: (1) graphiti-core 0.24.1 OpenAIClient defaults reasoning='minimal' which causes 'reasoning.effort' unsupported error with gpt-4o-mini, (2) FalkorDB is running in Docker on localhost:6379, (3) Graphiti MCP server is already running on port 8000 with OpenAI config, (4) Export file exists at data/confluence-export/oc-space-graphiti-2025-11-25.json with 234 pages. Questions: (1) Should we use the running MCP server's add_memory endpoint instead of direct graphiti_core? (2) What's the correct way to call MCP tools via HTTP? (3) Is there a simpler batch import approach? (4) Should we downgrade graphiti-core or patch the OpenAIClient? (5) Can we use the server's internal queue_service directly? Context: Previous session spent $2+ on failed Anthropic attempts due to rate limits, now trying OpenAI which is cheaper.)",
+      "Bash(PYTHONUNBUFFERED=1 uv run python:*)",
+      "WebSearch",
+      "WebFetch(domain:github.com)",
+      "mcp__graphiti__search_nodes",
+      "mcp__graphiti__get_episodes",
+      "mcp__memory__delete_observations",
+      "mcp__memory__add_observations",
+      "mcp__memory__open_nodes",
+      "mcp__notify__send_notification",
+      "Bash(cmd.exe /c start http://localhost:3000)",
+      "mcp__graphiti__search_memory_facts",
+      "Bash(pkill:*)",
+      "SlashCommand(/ultra-think What is the complete TAR (Treatment Authorization Request) HCA flow for Orange County Medi-Cal? Based on the knowledge graph data showing: (1) TAR Portal go-live August 2025 to digitize submissions, (2) Hospital Case Management submits TARs for discharged clients, (3) OC HCA Office Support confirms receipt and verifies Medi-Cal status then assigns to clinicians, (4) Carelon (OC contractor) does concurrent reviews for medical necessity and authorizes/denies, (5) Department of Health Care Services oversees for Medi-Cal. Questions: What are the detailed steps in sequence? What are the decision points? What data flows between systems? What are the SLAs/timelines? What triggers each step? What are the edge cases? How do appeals work? What reporting/metrics exist?)",
+      "mcp__chronicle__get_timeline_range",
+      "Bash(for dir in projects/*/)",
+      "Bash(do if [ -d \"$dir/.git\" ])",
+      "Bash(then echo \"=== $dir ===\")",
+      "Bash(git -C \"$dir\" status --porcelain)",
+      "Bash(fi)",
+      "Bash(done)",
+      "Bash(for dir in projects/google-calendar-clone projects/graphiti projects/jira-wrapper projects/lastfm-clone projects/livejournal-clone projects/react-ts-templates projects/task-manager)",
+      "Bash(do echo \"=== $dir ===\")",
+      "Bash(git -C \"$dir\" log --oneline -2)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git config:*)"
+    ],
+    "deny": [],
+    "ask": []
+  },
+  "enableAllProjectMcpServers": true,
+  "enabledMcpjsonServers": [
+    "memory-shack",
+    "context7",
+    "atlassian",
+    "chrome-devtools"
+  ],
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v osascript >/dev/null 2>&1; then osascript -e 'display notification \"Tool: $CLAUDE_TOOL_NAME completed\" with title \"Claude Code\"'; elif command -v notify-send >/dev/null 2>&1; then notify-send 'Claude Code' \"Tool: $CLAUDE_TOOL_NAME completed\"; fi"
+          }
+        ]
+      },
+      {
+        "matcher": "*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if command -v osascript >/dev/null 2>&1; then osascript -e 'display notification \"Tool: $CLAUDE_TOOL_NAME completed\" with title \"Claude Code\"'; elif command -v notify-send >/dev/null 2>&1; then notify-send 'Claude Code' \"Tool: $CLAUDE_TOOL_NAME completed\"; fi"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json, sys, re; from datetime import datetime; input_data = json.load(sys.stdin); tool_input = input_data.get('tool_input', {}); query = tool_input.get('query', ''); current_year = str(datetime.now().year); has_year = re.search(r'\\\\b20\\\\d{2}\\\\b', query); has_temporal = any(word in query.lower() for word in ['latest', 'recent', 'current', 'new', 'now', 'today']); should_add_year = not has_year and not has_temporal; modified_query = f'{query} {current_year}' if should_add_year else query; output = {'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'modifiedToolInput': {'query': modified_query}}}; print(json.dumps(output)); sys.exit(0)\"",
+            "timeout": 5
+          }
+        ]
+      },
+      {
+        "matcher": "WebSearch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 -c \"import json, sys, re; from datetime import datetime; input_data = json.load(sys.stdin); tool_input = input_data.get('tool_input', {}); query = tool_input.get('query', ''); current_year = str(datetime.now().year); has_year = re.search(r'\\\\b20\\\\d{2}\\\\b', query); has_temporal = any(word in query.lower() for word in ['latest', 'recent', 'current', 'new', 'now', 'today']); should_add_year = not has_year and not has_temporal; modified_query = f'{query} {current_year}' if should_add_year else query; output = {'hookSpecificOutput': {'hookEventName': 'PreToolUse', 'modifiedToolInput': {'query': modified_query}}}; print(json.dumps(output)); sys.exit(0)\"",
+            "timeout": 5
+          }
+        ]
+      }
+    ]
+  }
+}

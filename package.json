@@ -22,6 +22,8 @@
     "deps:check-interactive": "ncu -i --workspaces",
     "deps:update": "ncu -u --workspaces && pnpm install",
     "deps:update-minor": "ncu -u --target minor --workspaces && pnpm install",
+    "env:sync": "./scripts/sync-env.sh --all",
+    "env:sync:quantified": "./scripts/sync-env.sh quantified-life",
     "verify": "pnpm build:all && pnpm lint:all && pnpm type-check:all"
   },
   "dependencies": {
@@ -29,6 +31,7 @@
     "@tanstack/react-table": "^8.21.3",
     "autoprefixer": "^10.4.22",
     "clsx": "^2.1.1",
+    "csv-parse": "^6.1.0",
     "date-fns": "^3.6.0",
     "express": "^5.1.0",
     "framer-motion": "^12.23.24",
